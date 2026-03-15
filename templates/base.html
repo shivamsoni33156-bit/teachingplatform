@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gravity Coaching{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Gravity</a>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/courses">Courses</a></li>
+                <li><a href="/testseries">Test Series</a></li>
+                <li><a href="/studymaterial">Study Material</a></li>
+                <li><a href="/results">Results</a></li>
+                {% if 'user_id' in session %}
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    {% if current_user.is_admin %}
+                        <li><a href="/admin">Admin</a></li>
+                    {% endif %}
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div>
+                <h3>Gravity Coaching</h3>
+                <p>Your journey to IIT/NEET success starts here.</p>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <p>+91-XXXXXXXXXX</p>
+                <p>info@gravitycoaching.com</p>
+            </div>
+            <div>
+                <h4>Follow Us</h4>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2024 Gravity Coaching. All rights reserved.
+        </div>
+    </footer>
+
+    <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        function goBack() { window.history.back(); }
+    </script>
+</body>
+</html>

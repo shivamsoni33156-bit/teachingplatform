@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - Gravity{% endblock %}
+
+{% block content %}
+<section class="courses-page">
+    <h2>Our Courses</h2>
+    <div class="cards-grid">
+        {% for course in courses %}
+        <div class="card">
+            <h3>{{ course.name }}</h3>
+            <p>{{ course.desc }}</p>
+            <p><strong>Duration:</strong> {{ course.duration }}</p>
+            <p><strong>Price:</strong> ₹{{ course.price }}</p>
+            <form method="POST" action="{{ url_for('enroll', course_id=course.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-enroll">Enroll Now</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

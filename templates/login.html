@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Gravity{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Student Login</h2>
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.mobile.label }}
+            {{ form.mobile(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+    <p>New user? <a href="/register">Register</a></p>
+</div>
+{% endblock %}

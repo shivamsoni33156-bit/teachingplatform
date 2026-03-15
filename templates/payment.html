@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Gravity{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Complete Payment</h2>
+    <p>Course: {{ course.name }} - ₹{{ course.price }}</p>
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.method.label }}
+            {{ form.method(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-success") }}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home - Gravity{% endblock %}
+
+{% block content %}
+<section class="banner">
+    <div class="banner-content">
+        <h1>Start Your Journey to IIT / NEET Success</h1>
+        <p>Join Gravity Coaching for expert guidance and top results.</p>
+        <a href="/courses" class="cta-btn">Explore Courses</a>
+    </div>
+</section>
+
+<section class="courses-highlight">
+    <h2>Our Popular Courses</h2>
+    <div class="cards-grid">
+        {% for course in courses %}
+        <div class="card">
+            <h3>{{ course.name }}</h3>
+            <p>{{ course.desc[:100] }}...</p>
+            <a href="/courses" class="btn">View Details</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="success-stories">
+    <h2>Student Success Stories</h2>
+    <div class="stories-grid">
+        {% for result in results %}
+        <div class="story-card">
+            <h4>{{ result.student_name }}</h4>
+            <p>{{ result.score }}% in {{ result.course }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+

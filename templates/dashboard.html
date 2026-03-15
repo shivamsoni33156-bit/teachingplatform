@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Gravity{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <h2>Your Dashboard</h2>
+    {% if enrollments %}
+        <div class="cards-grid">
+            {% for enrollment in enrollments %}
+            <div class="card">
+                <h3>Course ID {{ enrollment.course_id }}</h3>
+                <p>Status: {{ enrollment.status.upper() }}</p>
+                <div class="progress-bar">
+                    <div class="progress" style="width: {{ enrollment.progress or 0 }}%"></div>
+                </div>
+                <a href="/video/1" class="btn">View Materials</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No enrolled courses. <a href="/courses">Enroll now</a></p>
+    {% endif %}
+</section>
+{% endblock %}

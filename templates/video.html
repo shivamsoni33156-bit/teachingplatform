@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Video & Study - Gravity{% endblock %}
+
+{% block content %}
+<section class="video-page">
+    <h2>{{ material.chapter }}</h2>
+    <div class="video-container">
+        <video controls>
+            <source src="{{ material.video_path }}" type="video/mp4">
+        </video>
+    </div>
+    <h3>Study Materials</h3>
+    <ul>
+        <li><a href="{{ material.pdf_path }}" download>Download PDF Notes</a></li>
+    </ul>
+    <h3>Chapters</h3>
+    <ol>
+        <li>Chapter 1</li>
+        <li>Chapter 2</li>
+        <!-- More from DB later -->
+    </ol>
+    <a href="/dashboard" class="btn">Back to Dashboard</a>
+</section>
+{% endblock %}
