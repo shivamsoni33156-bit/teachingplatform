@@ -1,25 +1,322 @@
-{% extends "base.html" %}
-
-{% block title %}Dashboard - Gravity{% endblock %}
-
-{% block content %}
-<section class="dashboard">
-    <h2>Your Dashboard</h2>
-    {% if enrollments %}
-        <div class="cards-grid">
-            {% for enrollment in enrollments %}
-            <div class="card">
-                <h3>Course ID {{ enrollment.course_id }}</h3>
-                <p>Status: {{ enrollment.status.upper() }}</p>
-                <div class="progress-bar">
-                    <div class="progress" style="width: {{ enrollment.progress or 0 }}%"></div>
-                </div>
-                <a href="/video/1" class="btn">View Materials</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GRAVITY Coaching Institute</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>GRAVITY</span>
+                </a>
             </div>
-            {% endfor %}
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/courses">Courses</a></li>
+                <li><a href="/dashboard" class="active">Dashboard</a></li>
+                {% if session.get('is_admin') %}
+                <li><a href="/admin">Admin Panel</a></li>
+                {% endif %}
+            </ul>
+            <div class="nav-buttons">
+                <span class="user-greeting">Hello, {{ user.name }}</span>
+                <a href="/logout" class="btn btn-outline">Logout</a>
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
-    {% else %}
-        <p>No enrolled courses. <a href="/courses">Enroll now</a></p>
-    {% endif %}
-</section>
-{% endblock %}
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <div class="welcome-section">
+                <h1>Welcome back, {{ user.name }}!</h1>
+                <p>Continue your learning journey</p>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <i class="fas fa-book"></i>
+                    <div>
+                        <h3>{{ enrollments|length }}</h3>
+                        <p>Enrolled Courses</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-video"></i>
+                    <div>
+                        <h3>200+</h3>
+                        <p>Video Lectures</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-file-pdf"></i>
+                    <div>
+                        <h3>500+</h3>
+                        <p>Study Materials</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <h3>0</h3>
+                        <p>Certificates</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-content">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Sidebar -->
+                <div class="dashboard-sidebar">
+                    <div class="user-profile">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>{{ user.name }}</h3>
+                        <p>{{ user.phone }}</p>
+                        <p class="email">{{ user.email }}</p>
+                    </div>
+                    
+                    <div class="sidebar-menu">
+                        <a href="#enrolled" class="menu-item active">
+                            <i class="fas fa-book"></i> My Courses
+                        </a>
+                        <a href="#progress" class="menu-item">
+                            <i class="fas fa-chart-line"></i> Progress
+                        </a>
+                        <a href="#" class="menu-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="#" class="menu-item">
+                            <i class="fas fa-question-circle"></i> Help
+                        </a>
+                        <a href="/logout" class="menu-item logout">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="dashboard-main">
+                    <!-- Enrolled Courses -->
+                    <div class="content-section" id="enrolled">
+                        <div class="section-header">
+                            <h2><i class="fas fa-book-open"></i> My Enrolled Courses</h2>
+                        </div>
+                        
+                        {% if enrollments %}
+                        <div class="enrolled-courses">
+                            {% for enrollment in enrollments %}
+                            <div class="enrolled-course-card">
+                                <div class="course-image">
+                                    {% if 'JEE' in enrollment.title %}
+                                        <i class="fas fa-atom"></i>
+                                    {% elif 'NEET' in enrollment.title %}
+                                        <i class="fas fa-heartbeat"></i>
+                                    {% elif 'Engineering' in enrollment.title %}
+                                        <i class="fas fa-cogs"></i>
+                                    {% elif 'BCA' in enrollment.title %}
+                                        <i class="fas fa-laptop-code"></i>
+                                    {% else %}
+                                        <i class="fas fa-book"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="course-details">
+                                    <h3>{{ enrollment.title }}</h3>
+                                    <p>{{ enrollment.description }}</p>
+                                    <div class="course-meta">
+                                        <span><i class="fas fa-clock"></i> {{ enrollment.duration }}</span>
+                                        <span><i class="fas fa-check-circle"></i> Enrolled</span>
+                                    </div>
+                                    
+                                    <!-- Progress Bar -->
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <span>Progress</span>
+                                            <span>{{ enrollment.progress }}%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: {{ enrollment.progress }}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="course-actions">
+                                    <a href="/study_material/{{ enrollment.course_id }}" class="btn btn-primary">
+                                        <i class="fas fa-play"></i> Continue Learning
+                                    </a>
+                                    <button class="btn btn-outline">
+                                        <i class="fas fa-certificate"></i> Certificate
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <h3>No courses enrolled yet</h3>
+                            <p>Start your learning journey by enrolling in a course</p>
+                            <a href="/courses" class="btn btn-primary">Browse Courses</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Progress Section -->
+                    <div class="content-section" id="progress">
+                        <div class="section-header">
+                            <h2><i class="fas fa-chart-line"></i> Your Progress</h2>
+                        </div>
+                        
+                        <div class="progress-overview">
+                            <div class="progress-card">
+                                <div class="progress-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <h4>Hours Learned</h4>
+                                <p class="progress-value">0 hrs</p>
+                            </div>
+                            <div class="progress-card">
+                                <div class="progress-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <h4>Topics Completed</h4>
+                                <p class="progress-value">0 / 100</p>
+                            </div>
+                            <div class="progress-card">
+                                <div class="progress-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <h4>Tests Taken</h4>
+                                <p class="progress-value">0</p>
+                            </div>
+                            <div class="progress-card">
+                                <div class="progress-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <h4>Average Score</h4>
+                                <p class="progress-value">0%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievements">
+                            <h3>Achievements</h3>
+                            <div class="achievement-grid">
+                                <div class="achievement locked">
+                                    <i class="fas fa-lock"></i>
+                                    <p>First Step</p>
+                                </div>
+                                <div class="achievement locked">
+                                    <i class="fas fa-lock"></i>
+                                    <p>Fast Learner</p>
+                                </div>
+                                <div class="achievement locked">
+                                    <i class="fas fa-lock"></i>
+                                    <p>Test Master</p>
+                                </div>
+                                <div class="achievement locked">
+                                    <i class="fas fa-lock"></i>
+                                    <p>Top Scorer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommended Courses -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-lightbulb"></i> Recommended For You</h2>
+                        </div>
+                        
+                        <div class="recommended-courses">
+                            <div class="recommend-card">
+                                <div class="recommend-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="recommend-content">
+                                    <h4>Upgrade to Premium</h4>
+                                    <p>Get access to all courses and features</p>
+                                </div>
+                                <button class="btn btn-primary">Learn More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <a href="/">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>GRAVITY</span>
+                        </a>
+                    </div>
+                    <p>Your trusted partner in IIT & NEET preparation.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/courses">Courses</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fas fa-envelope"></i> info@gravitycoaching.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GRAVITY Coaching Institute. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Sidebar menu toggle
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Smooth scroll to sections
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

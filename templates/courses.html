@@ -1,22 +1,229 @@
-{% extends "base.html" %}
-
-{% block title %}Courses - Gravity{% endblock %}
-
-{% block content %}
-<section class="courses-page">
-    <h2>Our Courses</h2>
-    <div class="cards-grid">
-        {% for course in courses %}
-        <div class="card">
-            <h3>{{ course.name }}</h3>
-            <p>{{ course.desc }}</p>
-            <p><strong>Duration:</strong> {{ course.duration }}</p>
-            <p><strong>Price:</strong> ₹{{ course.price }}</p>
-            <form method="POST" action="{{ url_for('enroll', course_id=course.id) }}" style="display:inline;">
-                <button type="submit" class="btn btn-enroll">Enroll Now</button>
-            </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - GRAVITY Coaching Institute</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>GRAVITY</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/courses" class="active">Courses</a></li>
+                <li><a href="/#results">Results</a></li>
+                <li><a href="/#about">About</a></li>
+            </ul>
+            <div class="nav-buttons">
+                {% if session.get('user_id') %}
+                    <a href="/dashboard" class="btn btn-primary">Dashboard</a>
+                    <a href="/logout" class="btn btn-outline">Logout</a>
+                {% else %}
+                    <a href="/login" class="btn btn-outline">Login</a>
+                    <a href="/login" class="btn btn-primary">Register</a>
+                {% endif %}
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
-        {% endfor %}
-    </div>
-</section>
-{% endblock %}
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Our Courses</h1>
+            <p>Choose the best course for your career</p>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Available Courses</h2>
+                <p>Comprehensive programs designed for your success</p>
+            </div>
+            
+            <div class="courses-grid">
+                {% for course in courses %}
+                <div class="course-card-large">
+                    <div class="course-image-large">
+                        <div class="course-icon">
+                            {% if 'JEE' in course.title %}
+                                <i class="fas fa-atom"></i>
+                            {% elif 'NEET' in course.title %}
+                                <i class="fas fa-heartbeat"></i>
+                            {% elif 'Engineering' in course.title %}
+                                <i class="fas fa-cogs"></i>
+                            {% elif 'BCA' in course.title %}
+                                <i class="fas fa-laptop-code"></i>
+                            {% else %}
+                                <i class="fas fa-book"></i>
+                            {% endif %}
+                        </div>
+                        <span class="course-badge">Popular</span>
+                    </div>
+                    <div class="course-content-large">
+                        <h3>{{ course.title }}</h3>
+                        <p class="course-description">{{ course.description }}</p>
+                        
+                        <div class="course-details">
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Duration</span>
+                                <strong>{{ course.duration }}</strong>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-rupee-sign"></i>
+                                <span>Price</span>
+                                <strong>₹{{ "{:,}".format(course.price) }}</strong>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-video"></i>
+                                <span>Video Lectures</span>
+                                <strong>200+</strong>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Study Material</span>
+                                <strong>500+ Pages</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="course-features">
+                            <h4>What's Included:</h4>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Expert Video Lectures</li>
+                                <li><i class="fas fa-check"></i> PDF Study Materials</li>
+                                <li><i class="fas fa-check"></i> Mock Tests</li>
+                                <li><i class="fas fa-check"></i> Progress Tracking</li>
+                                <li><i class="fas fa-check"></i> Doubt Solving</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="course-actions">
+                            {% if session.get('user_id') %}
+                                <a href="/enroll/{{ course.id }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-shopping-cart"></i> Enroll Now
+                                </a>
+                            {% else %}
+                                <a href="/login" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt"></i> Login to Enroll
+                                </a>
+                            {% endif %}
+                            <a href="#" class="btn btn-outline btn-lg">
+                                <i class="fas fa-info-circle"></i> Know More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Course Categories -->
+            <div class="course-categories">
+                <h3>Course Categories</h3>
+                <div class="category-grid">
+                    <div class="category-card">
+                        <i class="fas fa-flask"></i>
+                        <h4>Science</h4>
+                        <p>Physics, Chemistry, Mathematics</p>
+                    </div>
+                    <div class="category-card">
+                        <i class="fas fa-heartbeat"></i>
+                        <h4>Medical</h4>
+                        <p>Biology, NEET Preparation</p>
+                    </div>
+                    <div class="category-card">
+                        <i class="fas fa-calculator"></i>
+                        <h4>Engineering</h4>
+                        <p>JEE, BITSAT, State CET</p>
+                    </div>
+                    <div class="category-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h4>BCA/General</h4>
+                        <p>BCA Entrance, IT Courses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Need Help Choosing a Course?</h2>
+            <p>Our counselors are here to help you make the right choice</p>
+            <a href="#" class="btn btn-primary btn-lg">
+                <i class="fas fa-phone"></i> Talk to Counselor
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <a href="/">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>GRAVITY</span>
+                        </a>
+                    </div>
+                    <p>Your trusted partner in IIT & NEET preparation. We are committed to shaping future engineers and doctors.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/courses">Courses</a></li>
+                        <li><a href="/#results">Results</a></li>
+                        <li><a href="/#about">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Courses</h4>
+                    <ul>
+                        <li><a href="/courses">JEE Preparation</a></li>
+                        <li><a href="/courses">NEET Preparation</a></li>
+                        <li><a href="/courses">Engineering Entrance</a></li>
+                        <li><a href="/courses">BCA Preparation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Education Lane, City</li>
+                        <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fas fa-envelope"></i> info@gravitycoaching.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GRAVITY Coaching Institute. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
+

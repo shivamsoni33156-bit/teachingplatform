@@ -1,16 +1,34 @@
-# Gravity Coaching Institute Project TODO
+# Coaching Institute Website - TODO List
 
-## Steps from approved plan:
+## Project Setup
+- [x] Create project folder structure
+- [x] Set up Flask app.py with routes
+- [x] Configure SQLite database
 
-- [x] 1. Create requirements.txt and .env (setup dependencies/config)
-- [x] 2. Create app.py (Flask app, DB models, routes, auth)
-- [x] 3. Create templates/base.html (common layout, nav, footer)
-- [x] 4. Create remaining templates (index, login/register, courses, payment, dashboard, video, admin)
-- [x] 5. Create static/css/style.css and static/js/script.js (styles, responsive, JS)
-- [x] 6. Setup static/videos/ and static/pdfs/ with samples
-- [x] 7. Implement seed data route (/seed)
-- [ ] 6. Setup static/videos/ and static/pdfs/ with samples
-- [ ] 7. Implement seed data route (/seed)
-- [ ] 8. Followup: Install deps, setup MySQL DB 'gravity', run `python app.py`, test flows
+## Frontend Pages (Templates)
+- [x] index.html - Homepage with navigation, banner, courses, testimonials, footer
+- [x] login.html - Student Login/Registration with OTP
+- [x] courses.html - Course listing page
+- [x] payment.html - Payment gateway integration
+- [x] dashboard.html - Student dashboard with enrolled courses
+- [x] study_material.html - Video player and PDF downloads
+- [x] admin.html - Admin panel for managing content
 
-Next: Step 5.
+## Styling (CSS)
+- [x] style.css - Main stylesheet with responsive design
+- [x] Ensure modern UI with cards and animations
+
+## JavaScript
+- [x] main.js - Client-side functionality
+- [x] Handle forms, OTP verification, payment simulation
+
+## Backend (Flask)
+- [x] app.py - Complete Flask application
+- [x] Database models for users, courses, enrollments
+- [x] Authentication system
+- [x] OTP verification logic
+- [x] Admin routes for content management
+
+## Static Files Structure
+- [x] Create placeholder directories for videos and PDFs
+

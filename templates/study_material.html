@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }} - Study Material</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>GRAVITY</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/courses">Courses</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="/dashboard" class="btn btn-outline">Back to Dashboard</a>
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Study Material Header -->
+    <section class="study-header">
+        <div class="container">
+            <a href="/dashboard" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <h1>{{ course.title }}</h1>
+            <p>Video Lectures & Study Materials</p>
+        </div>
+    </section>
+
+    <!-- Study Content -->
+    <section class="study-content">
+        <div class="container">
+            <div class="study-grid">
+                <!-- Video Player Section -->
+                <div class="video-section">
+                    <div class="video-container">
+                        <div class="video-player">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play-circle"></i>
+                                <h3>Select a chapter to start learning</h3>
+                                <p>Click on any chapter from the list below</p>
+                            </div>
+                        </div>
+                        
+                        <div class="video-controls">
+                            <div class="progress-info">
+                                <span>Progress: {{ enrollment.progress }}% Complete</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ enrollment.progress }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="current-chapter">
+                        <h3><i class="fas fa-bookmark"></i> Current Chapter</h3>
+                        <p>Select a chapter from the list to start learning</p>
+                    </div>
+                </div>
+                
+                <!-- Chapter List -->
+                <div class="chapters-section">
+                    <div class="chapters-header">
+                        <h2><i class="fas fa-list"></i> Course Content</h2>
+                        <span class="chapter-count">{{ materials|length }} Chapters</span>
+                    </div>
+                    
+                    {% if materials %}
+                    <div class="chapters-list">
+                        {% for material in materials %}
+                        <div class="chapter-item" data-video-url="{{ material.video_url or '' }}">
+                            <div class="chapter-number">{{ material.chapter_number }}</div>
+                            <div class="chapter-info">
+                                <h4>{{ material.title }}</h4>
+                                <p>{{ material.description }}</p>
+                            </div>
+                            <div class="chapter-actions">
+                                <button class="btn-icon play-btn" title="Play Video">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                {% if material.pdf_path %}
+                                <a href="/static/pdfs/{{ material.pdf_path }}" class="btn-icon" download title="Download PDF">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-chapters">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>No content available yet</h3>
+                        <p>Study materials will be added soon</p>
+                        {% if session.get('is_admin') %}
+                        <a href="/admin" class="btn btn-primary">Add Content</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Study Materials Download -->
+            <div class="materials-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-download"></i> Download Study Materials</h2>
+                </div>
+                
+                <div class="materials-grid">
+                    <div class="material-card">
+                        <div class="material-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="material-info">
+                            <h4>Complete Study Notes</h4>
+                            <p>PDF format - All chapters combined</p>
+                            <span class="file-size">25 MB</span>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="material-info">
+                            <h4>Practice Questions</h4>
+                            <p>Chapter-wise practice problems</p>
+                            <span class="file-size">15 MB</span>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="material-info">
+                            <h4>Previous Year Papers</h4>
+                            <p>Last 10 years question papers</p>
+                            <span class="file-size">30 MB</span>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    
+                    <div class="material-card">
+                        <div class="material-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="material-info">
+                            <h4>Formula Booklet</h4>
+                            <p>Important formulas & shortcuts</p>
+                            <span class="file-size">5 MB</span>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mock Tests -->
+            <div class="tests-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> Mock Tests</h2>
+                </div>
+                
+                <div class="tests-grid">
+                    <div class="test-card">
+                        <div class="test-status available">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="test-info">
+                            <h4>Chapter Test 1</h4>
+                            <p>25 Questions | 30 Minutes</p>
+                        </div>
+                        <button class="btn btn-primary">Start Test</button>
+                    </div>
+                    
+                    <div class="test-card">
+                        <div class="test-status available">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="test-info">
+                            <h4>Chapter Test 2</h4>
+                            <p>25 Questions | 30 Minutes</p>
+                        </div>
+                        <button class="btn btn-primary">Start Test</button>
+                    </div>
+                    
+                    <div class="test-card">
+                        <div class="test-status locked">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="test-info">
+                            <h4>Full Course Test</h4>
+                            <p>100 Questions | 120 Minutes</p>
+                        </div>
+                        <button class="btn btn-outline" disabled>Locked</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <a href="/">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>GRAVITY</span>
+                        </a>
+                    </div>
+                    <p>Your trusted partner in IIT & NEET preparation.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/courses">Courses</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fas fa-envelope"></i> info@gravitycoaching.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GRAVITY Coaching Institute. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Chapter click handler
+        document.querySelectorAll('.chapter-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active state
+                document.querySelectorAll('.chapter-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Get chapter info
+                const title = this.querySelector('h4').textContent;
+                const videoUrl = this.dataset.videoUrl;
+                
+                // Update video player
+                const player = document.querySelector('.video-placeholder');
+                if (videoUrl) {
+                    player.innerHTML = `
+                        <video controls style="width: 100%; max-height: 400px;">
+                            <source src="${videoUrl}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `;
+                } else {
+                    player.innerHTML = `
+                        <i class="fas fa-play-circle"></i>
+                        <h3>${title}</h3>
+                        <p>Video will be available soon</p>
+                    `;
+                }
+                
+                // Update current chapter
+                document.querySelector('.current-chapter h3').innerHTML = `<i class="fas fa-bookmark"></i> ${title}`;
+            });
+        });
+        
+        // Download button handlers
+        document.querySelectorAll('.material-card .btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Download started! In production, this would download the actual file.');
+            });
+        });
+    </script>
+</body>
+</html>
+

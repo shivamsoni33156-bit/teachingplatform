@@ -1,21 +1,324 @@
-{% extends "base.html" %}
-
-{% block title %}Payment - Gravity{% endblock %}
-
-{% block content %}
-<div class="form-container">
-    <h2>Complete Payment</h2>
-    <p>Course: {{ course.name }} - ₹{{ course.price }}</p>
-    {% for category, message in get_flashed_messages(with_categories=true) %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.method.label }}
-            {{ form.method(class="form-control") }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - GRAVITY Coaching Institute</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>GRAVITY</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/courses">Courses</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="/dashboard" class="btn btn-outline">Dashboard</a>
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
-        {{ form.submit(class="btn btn-success") }}
-    </form>
-</div>
-{% endblock %}
+    </nav>
+
+    <!-- Payment Section -->
+    <section class="payment-section">
+        <div class="container">
+            <div class="payment-header">
+                <a href="/courses" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Courses
+                </a>
+                <h1>Secure Payment</h1>
+                <p>Complete your enrollment</p>
+            </div>
+            
+            <div class="payment-container">
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    <div class="course-summary">
+                        <div class="course-icon">
+                            {% if 'JEE' in course.title %}
+                                <i class="fas fa-atom"></i>
+                            {% elif 'NEET' in course.title %}
+                                <i class="fas fa-heartbeat"></i>
+                            {% elif 'Engineering' in course.title %}
+                                <i class="fas fa-cogs"></i>
+                            {% elif 'BCA' in course.title %}
+                                <i class="fas fa-laptop-code"></i>
+                            {% else %}
+                                <i class="fas fa-book"></i>
+                            {% endif %}
+                        </div>
+                        <div class="course-info">
+                            <h3>{{ course.title }}</h3>
+                            <p>{{ course.description }}</p>
+                            <div class="course-meta">
+                                <span><i class="fas fa-clock"></i> {{ course.duration }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="price-breakup">
+                        <div class="price-row">
+                            <span>Course Fee</span>
+                            <span>₹{{ "{:,}".format(course.price) }}</span>
+                        </div>
+                        <div class="price-row">
+                            <span>GST (18%)</span>
+                            <span>₹{{ "{:,.0f}".format(course.price * 0.18) }}</span>
+                        </div>
+                        <div class="price-row discount">
+                            <span>Discount</span>
+                            <span>- ₹0</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total Amount</span>
+                            <span>₹{{ "{:,.0f}".format(course.price * 1.18) }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-features">
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>100% Secure Payment</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-undo"></i>
+                            <span>7-Day Refund Policy</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-lock"></i>
+                            <span>SSL Encrypted</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <h2>Select Payment Method</h2>
+                    
+                    <form id="paymentForm" method="POST">
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="upi" checked>
+                                <div class="option-content">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <div>
+                                        <h4>UPI</h4>
+                                        <p>Pay using Google Pay, PhonePe, Paytm</p>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="card">
+                                <div class="option-content">
+                                    <i class="fas fa-credit-card"></i>
+                                    <div>
+                                        <h4>Credit / Debit Card</h4>
+                                        <p>Visa, Mastercard, RuPay</p>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="netbanking">
+                                <div class="option-content">
+                                    <i class="fas fa-university"></i>
+                                    <div>
+                                        <h4>Net Banking</h4>
+                                        <p>All major banks supported</p>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="wallet">
+                                <div class="option-content">
+                                    <i class="fas fa-wallet"></i>
+                                    <div>
+                                        <h4>Wallet</h4>
+                                        <p>Paytm, Amazon Pay, FreeCharge</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <!-- UPI Details (shown by default) -->
+                        <div class="payment-details" id="upi-details">
+                            <h3>UPI Payment</h3>
+                            <div class="form-group">
+                                <label>UPI ID</label>
+                                <input type="text" placeholder="yourname@upi" required>
+                            </div>
+                            <div class="upi-apps">
+                                <button type="button" class="upi-app">
+                                    <i class="fab fa-google-pay"></i>
+                                    <span>GPay</span>
+                                </button>
+                                <button type="button" class="upi-app">
+                                    <i class="fab fa-phonepe"></i>
+                                    <span>PhonePe</span>
+                                </button>
+                                <button type="button" class="upi-app">
+                                    <i class="fab fa-paytm"></i>
+                                    <span>Paytm</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Details -->
+                        <div class="payment-details" id="card-details" style="display: none;">
+                            <h3>Card Payment</h3>
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="text" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <input type="password" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Cardholder Name</label>
+                                <input type="text" placeholder="Name on card">
+                            </div>
+                        </div>
+                        
+                        <!-- Net Banking Details -->
+                        <div class="payment-details" id="netbanking-details" style="display: none;">
+                            <h3>Net Banking</h3>
+                            <div class="form-group">
+                                <label>Select Bank</label>
+                                <select>
+                                    <option>Select Bank</option>
+                                    <option>SBI</option>
+                                    <option>HDFC Bank</option>
+                                    <option>ICICI Bank</option>
+                                    <option>Axis Bank</option>
+                                    <option>Kotak Bank</option>
+                                    <option>Indian Bank</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Wallet Details -->
+                        <div class="payment-details" id="wallet-details" style="display: none;">
+                            <h3>Wallet</h3>
+                            <div class="wallet-options">
+                                <button type="button" class="wallet-btn">
+                                    <i class="fab fa-paytm"></i>
+                                    <span>Paytm</span>
+                                </button>
+                                <button type="button" class="wallet-btn">
+                                    <i class="fab fa-amazon-pay"></i>
+                                    <span>Amazon Pay</span>
+                                </button>
+                                <button type="button" class="wallet-btn">
+                                    <i class="fas fa-wallet"></i>
+                                    <span>FreeCharge</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-total">
+                            <span>Payable Amount:</span>
+                            <strong>₹{{ "{:,.0f}".format(course.price * 1.18) }}</strong>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fas fa-lock"></i> Pay Now
+                        </button>
+                        
+                        <p class="payment-terms">
+                            By proceeding, you agree to our Terms & Conditions and Privacy Policy.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Payment Successful!</h2>
+            <p>Your enrollment has been confirmed.</p>
+            <p>Redirecting to dashboard...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Payment method switching
+        document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Hide all payment details
+                document.querySelectorAll('.payment-details').forEach(detail => {
+                    detail.style.display = 'none';
+                });
+                
+                // Show selected payment details
+                const method = this.value;
+                document.getElementById(`${method}-details`).style.display = 'block';
+            });
+        });
+        
+        // Card number formatting
+        document.querySelector('input[placeholder="1234 5678 9012 3456"]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+        
+        // Expiry date formatting
+        document.querySelector('input[placeholder="MM/YY"]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2);
+            }
+            e.target.value = value;
+        });
+        
+        // Form submission
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                document.getElementById('successModal').style.display = 'flex';
+                
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 2000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
+

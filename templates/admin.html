@@ -1,39 +1,358 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - GRAVITY Coaching Institute</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar admin-navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>GRAVITY</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/" target="_blank">View Website</a></li>
+                <li><a href="/admin" class="active">Dashboard</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="/logout" class="btn btn-outline">Logout</a>
+            </div>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
 
-{% block title %}Admin Panel - Gravity{% endblock %}
+    <!-- Admin Header -->
+    <section class="admin-header">
+        <div class="container">
+            <h1><i class="fas fa-cog"></i> Admin Panel</h1>
+            <p>Manage courses, students, and content</p>
+        </div>
+    </section>
 
-{% block content %}
-<section class="admin-panel">
-    <h2>Admin Dashboard</h2>
-    <h3>Upload Material</h3>
-    <form method="POST" action="/admin/upload" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.course_id.label }} {{ form.course_id(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.chapter.label }} {{ form.chapter(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.video.label }} {{ form.video(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.pdf.label }} {{ form.pdf(class="form-control") }}
-        </div>
-        {{ form.submit(class="btn btn-primary") }}
-    </form>
+    <!-- Admin Content -->
+    <section class="admin-content">
+        <div class="container">
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="courses">
+                    <i class="fas fa-book"></i> Courses
+                </button>
+                <button class="tab-btn" data-tab="students">
+                    <i class="fas fa-users"></i> Students
+                </button>
+                <button class="tab-btn" data-tab="enrollments">
+                    <i class="fas fa-user-plus"></i> Enrollments
+                </button>
+                <button class="tab-btn" data-tab="materials">
+                    <i class="fas fa-file-upload"></i> Study Materials
+                </button>
+            </div>
 
-    <h3>Enrollments</h3>
-    <table>
-        <tr><th>ID</th><th>User ID</th><th>Course ID</th><th>Status</th></tr>
-        {% for enrollment in enrollments %}
-        <tr>
-            <td>{{ enrollment.id }}</td>
-            <td>{{ enrollment.user_id }}</td>
-            <td>{{ enrollment.course_id }}</td>
-            <td>{{ enrollment.status }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</section>
-{% endblock %}
+            <!-- Courses Tab -->
+            <div class="admin-panel active" id="courses">
+                <div class="panel-header">
+                    <h2><i class="fas fa-book"></i> Manage Courses</h2>
+                    <button class="btn btn-primary" onclick="showAddCourseModal()">
+                        <i class="fas fa-plus"></i> Add Course
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Duration</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{ course.id }}</td>
+                                <td>{{ course.title }}</td>
+                                <td>{{ course.duration }}</td>
+                                <td>₹{{ "{:,}".format(course.price) }}</td>
+                                <td>
+                                    <button class="btn-icon" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div class="admin-panel" id="students">
+                <div class="panel-header">
+                    <h2><i class="fas fa-users"></i> Manage Students</h2>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone }}</td>
+                                <td>{{ user.created_at[:10] }}</td>
+                                <td>
+                                    <button class="btn-icon" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-icon danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Enrollments Tab -->
+            <div class="admin-panel" id="enrollments">
+                <div class="panel-header">
+                    <h2><i class="fas fa-user-plus"></i> Student Enrollments</h2>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Enrolled Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr>
+                                <td>{{ enrollment.id }}</td>
+                                <td>{{ enrollment.name }}<br><small>{{ enrollment.phone }}</small></td>
+                                <td>{{ enrollment.title }}</td>
+                                <td>
+                                    <span class="badge {{ enrollment.payment_status }}">
+                                        {{ enrollment.payment_status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="progress-cell">
+                                        <div class="mini-progress">
+                                            <div class="mini-fill" style="width: {{ enrollment.progress }}%"></div>
+                                        </div>
+                                        <span>{{ enrollment.progress }}%</span>
+                                    </div>
+                                </td>
+                                <td>{{ enrollment.enrolled_at[:10] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Study Materials Tab -->
+            <div class="admin-panel" id="materials">
+                <div class="panel-header">
+                    <h2><i class="fas fa-file-upload"></i> Upload Study Materials</h2>
+                    <button class="btn btn-primary" onclick="showAddMaterialModal()">
+                        <i class="fas fa-plus"></i> Add Material
+                    </button>
+                </div>
+                
+                <form class="upload-form" id="materialForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Select Course</label>
+                            <select name="course_id" required>
+                                <option value="">Choose Course</option>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Chapter Number</label>
+                            <input type="number" name="chapter_number" placeholder="e.g., 1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Chapter Title</label>
+                        <input type="text" name="title" placeholder="e.g., Introduction to Physics" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" placeholder="Chapter description"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Upload Video</label>
+                            <input type="file" name="video" accept="video/*">
+                        </div>
+                        <div class="form-group">
+                            <label>Upload PDF</label>
+                            <input type="file" name="pdf" accept=".pdf">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Material
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Course Modal -->
+    <div class="modal" id="addCourseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Course</h2>
+                <button class="close-modal" onclick="closeModal('addCourseModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addCourseForm">
+                <div class="form-group">
+                    <label>Course Title</label>
+                    <input type="text" name="title" placeholder="e.g., JEE Preparation" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" placeholder="Course description" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <input type="text" name="duration" placeholder="e.g., 2 Years" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="number" name="price" placeholder="e.g., 150000" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus"></i> Add Course
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.admin-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Modal functions
+        function showAddCourseModal() {
+            document.getElementById('addCourseModal').style.display = 'flex';
+        }
+        
+        function showAddMaterialModal() {
+            document.querySelector('.admin-tabs .tab-btn[data-tab="materials"]').click();
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Close modal on outside click
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+        
+        // Add Course Form
+        document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/admin/add_course', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Course added successfully!');
+                    closeModal('addCourseModal');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred. Please try again.');
+            });
+        });
+        
+        // Add Material Form
+        document.getElementById('materialForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/admin/add_material', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Material added successfully!');
+                    this.reset();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
+
